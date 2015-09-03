@@ -1,18 +1,32 @@
-expect = require('expect.js');
+expect  = require('expect.js');
+load    = require.bind(module,'..')
+
 describe('require("oath")',function () {
-  deferred = require('..');
+  oath = load();
   describe('should have',function () {
+  
     it('[funciton]',function () {
 
-      expect(deferred).to.be.a('function')
-    })
+      expect(oath).to.be.a('function')
+    });
     it('.Promise',function(){
-      expect(deferred).to.have.key('Promise')
-    })
+      expect(oath).to.have.key('Promise')
+    });
     it('.When',function(){
-      expect(deferred).to.have.key('When')
+      expect(oath).to.have.key('When')
     })
   })
+});
+
+describe('Oath',function(){
+  // as main method
+  it('()',function(done){
+    oath = load();
+    oath(function (resolve) {
+      setTimeout(resolve, 1500)
+    }).then(function () {
+        done()
+      })
+  })
+
 })
-
-

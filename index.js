@@ -1,16 +1,16 @@
-(function () {
-  deferred =  function (fn) {
-    var r = new deferred.Promise();
+void function () {
+  function oath (fn) {
+    var r = new oath.Promise();
     fn(function (err) {
       r.emit(err)
     });
     return r
-  };
-  if  (typeof window === 'object') window.deferred = deferred
-  else module.exports = deferred
+  }
+  (typeof window === 'object')?(window.oath = oath):(module.exports = oath);
 
-  deferred.Promise = function () {
-    var Promise = []
+
+  oath.Promise = function () {
+    var Promise = [];
     Promise.err = function (fn) {
       this.push({ ok: false, cb: fn });
       return this
@@ -27,7 +27,7 @@
     };
     return Promise
   };
-  deferred.When = function () {
+  oath.When = function () {
     var When = function (targets) {
       this.states   = [];
       this.results  = [];
@@ -38,14 +38,14 @@
       };
       this.prepare = function () {
         targets.forEach((function (targetCb, i) {
-          this.results.push([, ,])
+          this.results.push([, ,]);
           var state = {
             ready: false
           }
-          this.states.push(state)
+          this.states.push(state);
           var resolve = function (err, data) {
-            state.ready = 'resolved'
-            this.results[i] = [err, data]
+            state.ready = 'resolved';
+            this.results[i] = [err, data];
             this.emit()
           }
           setTimeout(targetCb.bind({},
@@ -54,7 +54,7 @@
         }).bind(this));
       };
       setTimeout(this.prepare.bind(this),
-                 0)
+                 0);
       function emit () {
         var allResolved = this.states.reduce(function (result, state) {
           if (!state.ready) result = false
@@ -62,9 +62,9 @@
         }, true)
         console.log('allResolved',
                     allResolved,
-                    this.states)
+                    this.states);
         if (allResolved) {
-          cbs = this.cbs
+          cbs = this.cbs;
           this.cbs.forEach((function (thenCb) {
             thenCb.apply && thenCb.apply({},
                                          this.results)
@@ -77,4 +77,4 @@
     return when;
   }
 
-})();
+}();
