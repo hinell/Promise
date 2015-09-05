@@ -1,5 +1,6 @@
 # Promise
-Simple native javascript for iojs, nodejs and browser micro [Promise A+](https://promisesaplus.com/) compliant implementation.
+Simple native micro javascript promise implementation. 
+For iojs, nodejs and browser. [Promise A+](https://promisesaplus.com/) compliant.
 
 ---
 ```
@@ -21,11 +22,14 @@ var request = require('request');
 oath({some:'data'}).then(function(data){data.some}) // => 'data'
 oath(function(resolve){setTimeout(function(){resolve.('Deferred 1') })},
      function(resolve){setTimeout(function(){resolve.('Deferred 2') })})
-.then(function(d,d2){}) // d => 'Deferred 1', d2 => 'Deferred 2'
-                        // order of passed aruments is always ensured
+.then(function(d,d2){}) 
+// d => 'Deferred 1', d2 => 'Deferred 2'
+// order of passed aruments ensured
   
-oath(new Error('myError'))       .catch(function(err){}) // err.message => 'myError'
-oath(new Error('myError'),'info').then(function(err,info){})  // err.message => 'myError', info => 'info'
+oath(new Error('myError'))       .catch(function(err){}) 
+// err.message => 'myError'
+oath(new Error('myError'),'info').then(function(err,info){})  
+// err.message => 'myError', info => 'info'
 ```
 ```javascript
 //  Want more? Let's take a glance at this:
@@ -51,7 +55,7 @@ var deferredUser = {name:'foo',adress:'boo'}
     function anotherFunction (resolve,promise){ 
         resolve.apply(promise,[{data:'here is example where we can apply a resolve method by .apply()'}])
         }
-//  And results handling        
+//  And results of handling        
     function thenListener (fnData,user,someData){
         fnData    // => 'some data here!'
         user      // => {name:'foo',adress:'boo'}
