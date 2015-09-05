@@ -1,36 +1,10 @@
 expect = require('expect.js');
 oath = require('./index.js');
-
-// unnecessary tests
-//var describe, it;
-//describe('Oath', function () {
-//
-//  it('#When()', function () {
-//    expect(oath).to.have.key('When')
-//  })
-//  it('#Promise()', function () {
-//    expect(oath).to.have.key('Promise')
-//  })
-//
-//  describe('.Promise', function () {
-//    it('#contructor',function () {
-//         expect(oath.Promise).to.be.a('function')
-//       });
-//
-//    it('#defer()', function () {
-//      expect(oath.Promise).to.have.key('defer')
-//    });
-//
-//  })
-//
-//
-//
-//});
-
+var debug    = false ? console.log.bind(console,'|'): function(){};
 
 deferred  = function () {
   var args = [].slice.call(arguments);
-  var delay= args.pop()
+  var delay= args.pop();
   return function (resolve) {
     setTimeout(function () {
       args.length === 0 && resolve()
@@ -39,8 +13,7 @@ deferred  = function () {
       args.length === 3 && resolve(args[0],args[1],args[2])
       args.length === 4 && resolve(args[0],args[1],args[2],args[3])
     },delay || 0) };
-}
-to = function (fn) {  }
+};
 
 describe('oath() [oath.Promise.defer]',function(){
   it('then postpone call', function (done) {
@@ -48,7 +21,7 @@ describe('oath() [oath.Promise.defer]',function(){
       .then(function (data1,data2) {
               data1 === 'data1' && data2 === 'data2' &&  done()
             })
-  })
+  });
   it('catch/error postpone call',function (done) {
     oath(deferred(new Error('some error'),900))
       .then(function (err) {
@@ -59,51 +32,48 @@ describe('oath() [oath.Promise.defer]',function(){
                err && (err.message === 'some error') && done()
              })
   });
-
-  it('during/progress repetition',function(done){
-    var count = 0;
-    oath(deferred(650))
-      .during(function (intrv) {
-                (count++ > 2) && (clearInterval(intrv),done());
-
-              })
-
-  })
-
-})
+});
 
 describe('oath() [oath.Promise.when] ',function(){
-  it('3 callbacks w/o err',function(done){
+  it('3 callbacks postpone w/o err',function(done){
     oath(
       deferred('1',300),
       deferred('2',600),
       deferred('3',300))
       .then(function (d1, d2, d3) {
-              d1.data === '1' &&
-              d2.data === '2' &&
-              d3.data === '3' && done()
+                  debug('then:arguments',arguments);
+              d1 === '1' &&
+              d2 === '2' &&
+              d3 === '3' && done()
             })
-  })
-  it('2 callbacks w error',function(done){
+  });
+  it('2 callbacks postpone w error',function(done){
     oath(
-      deferred(new Error('1'),'1',300),
-      deferred(new Error('2'),'2',500))
+      deferred({error: new Error('1'),data: 'some data here 1'},300),
+      deferred({error: new Error('2'),data: 'some data here 2'},500))
       .then(function (data1, data2) {
               debug('then:arguments',arguments);
-              //data1[0].message === '1' &&
-              //data2[0].message === '2' &&
-              //data1[1] === '1' &&
-              //data2[1] === '2' && done()
-
-
               data1.error.message === '1' &&
               data2.error.message === '2' &&
-              data1.data          === '1' &&
-              data2.data          === '2' &&
+              data1.data === 'some data here 1' &&
+              data2.data === 'some data here 2' &&
               done()
-
-
             })
+  });
+  it('2 objects', function (done) {
+
+    oath({d:'one'},{d:'two'},{d:'three'})
+    //oath({d:'one'},{d:'two'})
+      .then(function (f,s,t) {
+      debug('2 objects:arguments',arguments);
+        f.d === 'one' &&
+        //s.d === 'two' && done();
+        s.d === 'two' &&
+        t.d === 'three' && done()
+
+      })
+
+
   })
 
-})
+});
