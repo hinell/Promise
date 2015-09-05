@@ -2,7 +2,6 @@ module.exports = function (grunt) {
 grunt.loadNpmTasks('grunt-contrib-watch'    );
   grunt.loadNpmTasks('grunt-mocha-test'     );
   grunt.loadNpmTasks('grunt-simple-mocha'   );
-  grunt.loadNpmTasks('grunt-contrib-jshint' );
   grunt.initConfig({
     mochaTest: {
       oath: {

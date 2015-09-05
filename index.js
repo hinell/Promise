@@ -135,8 +135,14 @@ void function () {
   * */
   oath.Promise.when = function () {
         /* An When instance is an representative  promise instance for .#then(), #catch() and #during() interfaces.*/
-    var whenPromise = this.whenPromise  = new oath.Promise;
-        //whenPromise.catch = whenPromise.error = void 0;
+    var whenPromise   = this.whenPromise  = new oath.Promise;
+    var thenListeners = whenPromise[':then'  ]
+        whenPromise.resolve = function () {
+          this.state.ok   = true;
+          debug('resolved:ok',arguments)
+          thenListeners.apply.apply(thenListeners,arguments)
+        }
+
     var promises    = whenPromise.promises    = [];
         promises.areResolved  = [].reduce.bind(promises,function (resolved,promise) {
           resolved && promise.done || (resolved = false)
@@ -177,4 +183,9 @@ void function () {
           .forEach(function (target) { target() });
       return whenPromise
   }
+  //console.log('oath.call');
+  //oath(
+  //  function (resolve) { setTimeout(function(){resolve(new Error())},0)  },
+  //  function (resolve) { setTimeout(function(){resolve('someData' )},10)  }
+  //).then(console.log.bind(console))
 }();
