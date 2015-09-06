@@ -1,6 +1,6 @@
 # Promise
 Simple native micro javascript promise implementation. 
-For iojs, nodejs and browser. [Promise A+](https://promisesaplus.com/) compliant.
+For iojs, nodejs and browser. [Promise /A+](https://promisesaplus.com/) compliant.
 
 ---
 ```
@@ -11,14 +11,13 @@ $ npm i hinell/oath-js
 //  before usage run: npm i request
 var request = require('request');
     oath    = require('oath-js');
-    oath(function (resolve) {
     oath(request.get.bind(request,'http://www.google.com'))
     .then(function (err,res,googlepage){
       console.log(googlepage.toString()); // => google.com page
     });
 ```
 ```javascript
-// Express examples
+// A few quick examples:
 oath({some:'data'}).then(function(data){data.some}) // => 'data'
 oath(function(resolve){setTimeout(function(){resolve.('Deferred 1') })},
      function(resolve){setTimeout(function(){resolve.('Deferred 2') })})
@@ -32,7 +31,7 @@ oath(new Error('myError'),'info').then(function(err,info){})
 // err.message => 'myError', info => 'info'
 ```
 ```javascript
-//  Want more? Let's take a glance at this:
+//  Want more? Ok, let's take a glance at what we have there:
 var deferredUser = {name:'foo',adress:'boo'}
     oath(
       deferredFunction,// Function - Any data types are allowed here. One or more.
