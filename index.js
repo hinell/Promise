@@ -1,16 +1,15 @@
 /*
 *  Copyright Hinell@github.com 2015. All right reserved.
-*  Description:
-*  Incredibly simple and incredibly fast Promise implemetations.
-*  Just for fun!
-* */
-
-
+*  Incredibly simple and incredibly fastest Promise implemetation!
+*/
 void function () {
   var debug    = false ? console.log.bind(console,'|'): function(){};
   "use strict";
   function oath (fn) {
       var args = [].slice.call(arguments)
+   /* Entry point here.
+      If we have only one target object passed into this function then we call #defer() (see below) method,
+      otherwise #when().*/
       if (args.length === 1)
         return oath.Promise.defer(fn);
       if (args.length > 1) {
@@ -21,7 +20,6 @@ void function () {
 
   (typeof window === 'object')?(window.oath = oath):(module.exports = oath);
   /*
-  * Entry point here
   * @param {Function} Callback. The callback function presents a resolve argument which deserves to be called when
   *                   target (generally async, but not only) function will have ended up its own evaluation.
   *                   The resolve function also able to get several  parameters: error - for Error object,
@@ -35,8 +33,9 @@ void function () {
     var errListeners      = this[':error' ] = [],
         thenListeners     = this[':then'  ] = [],
         progressListeners = this[':during'] = [];
-
-        /* Here is assignation script to an apply method for each of the errListeners, thenListeners and progressListeners callback's collection.*/
+        
+        /*Here is an #apply() function serves to be applied for each of the
+          errListeners, thenListeners and progressListeners callback's collections.*/
         /*
         * @param {IntevalId} progressIntrvl
         * @private
@@ -48,7 +47,7 @@ void function () {
           })
         };
         /*
-         * @method callbacks.apply applyes error and data argumets for each of the registered callback of the callbacs collections.
+         * @method callbacks.apply Applyes error and data arguments for each of the registered callback of the callbacs collections.
          * @param {arguments} [err,data] - These arguments are come from resolve function:
          *         Error passed from resolve public function as first argument.
          *         Data  passed from resolve in arbitrary order after error argument.
@@ -89,34 +88,29 @@ void function () {
       }
       this.done = true;
     }
-
     /*
-    * @method then Register callback to be called after target function calls resolve method.
-    * @pablic
+    * @method then Accepts callback to be called after target function calls resolve method.
+    * @public
     * @param  {Function}  Called after the async functin will be resolved.
     * @return {oath.Promise instance}    Instance of Promise*/
     this.then     = function (cb) { thenListeners.push(cb); return this}
-
     /*
-    * @method error Register callback to be called after target function calls resolve method.
-    * @pablic
+    * @method error Accepts callback to be called after target function calls resolve method.
+    * @public
     * @param  {Function}  Called after the async functin will be resolved.
     * @return {oath.Promise instance}    Instance of Promise*/
     this.error    = function (cb) { errListeners.push(cb); return this}
     this.catch    = this.ifError = this.error
-
     /*
-    * Method was deprecated!
+    * Method is deprecated!
     * @method during,progress  Register callback to be called after target function calls resolve method.
-    * @pablic
+    * @public
     * @param  {Function}  Called after the async functin will be resolved.
     * @return {oath.Promise instance}    Instance of Promise*/
     //this.during   = function (cb) { progressListeners.push(cb); return this}
   }
-
-
   /*
-  * @method defer target async (or not) function
+  * @method defer Accepts as target an async (or sync) function
   * @param {Function}
   * @return {Object} Promise instance
   * */
@@ -125,16 +119,14 @@ void function () {
     var promise = new oath.Promise()
         targetObj(promise.resolve.bind(promise),promise)
         return promise
-
   }
-
   /*
-  * An promise class method is able to accept several deferred to handle objects
+  * The promise class method accepts several deferred object to handle them as deferred
   * @param {Function|[,Function,Objects]}
   * @return {oath.Promise instance}
   * */
   oath.Promise.when = function () {
-        /* An When instance is an representative  promise instance for .#then(), #catch() and #during() interfaces.*/
+     /* An When instance is an representative  promise instance for .#then(), #catch() and #during() interfaces.*/
     var whenPromise   = this.whenPromise  = new oath.Promise;
     var thenListeners = whenPromise[':then'  ]
         whenPromise.resolve = function () {
@@ -183,9 +175,4 @@ void function () {
           .forEach(function (target) { target() });
       return whenPromise
   }
-  //console.log('oath.call');
-  //oath(
-  //  function (resolve) { setTimeout(function(){resolve(new Error())},0)  },
-  //  function (resolve) { setTimeout(function(){resolve('someData' )},10)  }
-  //).then(console.log.bind(console))
 }();
