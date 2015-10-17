@@ -1,6 +1,6 @@
 /*
 *  Copyright Hinell@github.com 2015. All right reserved.
-*  Incredibly simple and incredibly fastest Promise implemetation!
+*  Incredibly simple and incredibly fast Promise implemetation.
 */
 void function () {
   var debug    = false ? console.log.bind(console,'|'): function(){};
@@ -9,7 +9,7 @@ void function () {
       var args = [].slice.call(arguments)
    /* Entry point here.
       If we have only one target object passed into this function then we call #defer() (see below) method,
-      otherwise #when().*/
+      otherwise we call #when().*/
       if (args.length === 1)
         return oath.Promise.defer(fn);
       if (args.length > 1) {
@@ -20,12 +20,13 @@ void function () {
 
   (typeof window === 'object')?(window.oath = oath):(module.exports = oath);
   /*
-  * @param {Function} Callback. The callback function presents a resolve argument which deserves to be called when
-  *                   target (generally async, but not only) function will have ended up its own evaluation.
-  *                   The resolve function also able to get several  parameters: error - for Error object,
-  *                   always have first place in order of arguments, and data - may be have arbitrary order. Order of data is ensured.
-  *                   If target function doesn't has error, you always should specify error parameter
-  *                   as undefined, i.e.: resolve(void 0, 'my data here')
+  * @param {Function} Callback. The target callback function accepts resolve function to be called when
+  *                   (generally async, but not only) finishes up with its own evaluation.
+  *                   The resolve function also able to accept these special parameters: 
+  *                   1) error - for Error object, always reserves first place in order of the arguments;
+  *                   data - may be placed in any orded of the arguments. Positions are ensured.
+  *                   If your target function doesn't have any erroros just specify error parameter
+  *                   as null, i.e.: resolve(null, 'foo','bar')
   *@return {Promise} Promise object
   * */
   oath.Promise = function () {
@@ -34,8 +35,8 @@ void function () {
         thenListeners     = this[':then'  ] = [],
         progressListeners = this[':during'] = [];
         
-        /*Here is an #apply() function serves to be applied for each of the
-          errListeners, thenListeners and progressListeners callback's collections.*/
+        /*#apply() function applyes each of the registered callbacks of the
+          errListeners, thenListeners and progressListeners callbacks collections.*/
         /*
         * @param {IntevalId} progressIntrvl
         * @private
@@ -147,7 +148,7 @@ void function () {
             },[])
         };
 
-        /* Handles an each target function of creation When(func,func,func) object. */
+        /* Handles each target function of created When(func,func,func) object. */
         [].slice.call(arguments)
           .map(function (targetObj,i) {
                  if (typeof targetObj === 'function') return targetObj;
