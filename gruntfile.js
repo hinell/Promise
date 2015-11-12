@@ -27,6 +27,7 @@ grunt.loadNpmTasks('grunt-contrib-watch'    );
     }
    }
   );
-  grunt.registerTask('test',      ['mochaTest:oath']);
-  grunt.registerTask('test:live', ['watch:tests'])
+  grunt.registerTask('test'     , ['mochaTest:oath']);
+  grunt.registerTask('test:live', ['watch:tests']);
+  grunt.registerTask('default'  , ['test:live'])
 };

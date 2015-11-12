@@ -1,20 +1,37 @@
-expect = require('expect.js');
-oath = require('./index.js');
+expect      = require('expect.js');
+oath        = require('./index.js');
+describe('Oath environment test', function () {
 
+  it('Node.js environment [ >=0.12.7]', function () {
+    expect(oath).to.be.a('function')
+
+  });
+  it('Browser environment', function () {
+    new Function(''
+      +'global.window = {};\r\n'
+      +require('fs').
+       readFileSync('./index.js',{encoding:'utf8'})
+    ).call();
+    expect(window.oath).to.be.a('function')
+
+  });
+});
+
+oath      = require('./index.js');
 deferred  = function () {
   var args = [].slice.call(arguments);
   var delay= args.pop();
   return function (resolve) {
     setTimeout(function () {
-      args.length === 0 && resolve()
-      args.length === 1 && resolve(args[0])
-      args.length === 2 && resolve(args[0],args[1])
-      args.length === 3 && resolve(args[0],args[1],args[2])
+      args.length === 0 && resolve();
+      args.length === 1 && resolve(args[0]);
+      args.length === 2 && resolve(args[0],args[1]);
+      args.length === 3 && resolve(args[0],args[1],args[2]);
       args.length === 4 && resolve(args[0],args[1],args[2],args[3])
     },delay || 0) };
 };
 
-describe('oath() [oath.Promise.defer]',function(){
+describe('oath.Promise.defer',function(){
   it('then postpone call', function (done) {
     oath(deferred('data1','data2',900))
       .then(function (data1,data2) {
@@ -33,7 +50,7 @@ describe('oath() [oath.Promise.defer]',function(){
   });
 });
 
-describe('oath() [oath.Promise.when] ',function(){
+describe('oath.Promise.when',function(){
   it('3 callbacks postpone w/o err',function(done){
     oath(
       deferred('1',300),
