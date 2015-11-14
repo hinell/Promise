@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-grunt.loadNpmTasks('grunt-contrib-watch'    );
+  grunt.loadNpmTasks('grunt-contrib-watch'  );
   grunt.loadNpmTasks('grunt-mocha-test'     );
   grunt.loadNpmTasks('grunt-simple-mocha'   );
   grunt.initConfig({
@@ -18,7 +18,7 @@ grunt.loadNpmTasks('grunt-contrib-watch'    );
         options: {
           spawn    : false,
           interrupt: true,
-          //debounceDelay: 250,
+          //debounceDelay: 500,
           reload   : true
         },
         tasks  : ['test'],
