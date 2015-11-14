@@ -10,19 +10,19 @@ module.exports = function (grunt) {
           //grep: 'defer',
           clearRequireCache: true
         },
-        src    : ['./**/*.test.js']
+        src    : ['./*.test.js']
       }
     },
     watch    : {
       tests: {
         options: {
-          spawn    : false,
+          spawn    : true,
           interrupt: true,
           //debounceDelay: 500,
           reload   : true
         },
         tasks  : ['test'],
-        files  : ['./**/*.test.js', './index.js']
+        files  : ['gruntfile.js','./**/*.test.js', './index.js']
         }
     }
    }

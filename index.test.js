@@ -1,92 +1,85 @@
 expect      = require('expect.js');
 oath        = require('./index.js');
-describe('Oath environment test', function () {
+describe('Oath modulest tests'  , function () {
+  describe('it works fine with' ,function(){
+    it('common.js modules', function () {
+      expect(oath).to.be.an('function')
+    });
+    it('browser\'s global', function () {
+      new Function(''
+        +'global.window = {};\r\n'
+        +require('fs').
+        readFileSync('./index.js',{encoding:'utf8'})
+      ).call();
+      expect(window.oath).to.be.a('function')
 
-  it('Node.js environment [ >=0.12.7]', function () {
-    expect(oath).to.be.a('function')
-
-  });
-  it('Browser environment', function () {
-    new Function(''
-      +'global.window = {};\r\n'
-      +require('fs').
-       readFileSync('./index.js',{encoding:'utf8'})
-    ).call();
-    expect(window.oath).to.be.a('function')
-
-  });
-});
-
-oath      = require('./index.js');
-deferred  = function () {
-  var args = [].slice.call(arguments);
-  var delay= args.pop();
-  return function (resolve) {
-    setTimeout(function () {
-      args.length === 0 && resolve();
-      args.length === 1 && resolve(args[0]);
-      args.length === 2 && resolve(args[0],args[1]);
-      args.length === 3 && resolve(args[0],args[1],args[2]);
-      args.length === 4 && resolve(args[0],args[1],args[2],args[3])
-    },delay || 0) };
-};
-
-describe('oath.Promise.defer',function(){
-  it('then postpone call', function (done) {
-    oath(deferred('data1','data2',900))
-      .then(function (data1,data2) {
-              data1 === 'data1' && data2 === 'data2' &&  done()
-            })
-  });
-  it('catch/error postpone call',function (done) {
-    oath(deferred(new Error('some error'),900))
-      .then(function (err) {
-              console.log('arguments err',arguments);
-              done(new Error('callbeck passed into then function shouldn\'t be called if some error has been thrown!'))
-            })
-      .catch(function (err) {
-               err && (err.message === 'some error') && done()
-             })
+    });
+    it('AMD modules')
   });
 });
 
-describe('oath.Promise.when',function(){
-  it('3 callbacks postpone w/o err',function(done){
-    oath(
-      deferred('1',300),
-      deferred('2',600),
-      deferred('3',300))
-      .then(function (d1, d2, d3) {
-              d1 === '1' &&
-              d2 === '2' &&
-              d3 === '3' && done()
-            })
-  });
-  it('2 callbacks postpone w error',function(done){
-    oath(
-      deferred({error: new Error('1'),data: 'some data here 1'},300),
-      deferred({error: new Error('2'),data: 'some data here 2'},500))
-      .then(function (data1, data2) {
-              data1.error.message === '1' &&
-              data2.error.message === '2' &&
-              data1.data === 'some data here 1' &&
-              data2.data === 'some data here 2' &&
-              done()
-            })
-  });
-  it('2 objects', function (done) {
-
-    oath({d:'one'},{d:'two'},{d:'three'})
-    //oath({d:'one'},{d:'two'})
-      .then(function (f,s,t) {
-        f.d === 'one' &&
-        //s.d === 'two' && done();
-        s.d === 'two' &&
-        t.d === 'three' && done()
-
+Oath      = require('./index.js');
+describe('Creating of the new Oath object with', function () {
+  describe('a single targeted postpone call', function () {
+    it('resolves promise by passing result into then() handler' ,function () {
+      new Oath(function (resolve) {
+        setTimeout(function () { resolve('ok') },100)
+      }).then(function (ok) {
+        expect(ok).to.eql('ok')
       })
-
-
-  })
-
+    });
+    it('reassigns then() handler by each invocation of then()'  ,function (done) {
+      new Oath(function (resolve) {
+        setTimeout(function () { resolve('ok') },100)
+      }).then(function () {
+        done(new Error('Expected then() handler to be not called!'))
+      }).then(function (ok) {
+        expect(ok).to.eql('ok')
+      })
+    });
+    it('rejects promise by an Error argument and passes its instance into catch() handler',function(){
+      new Oath(function (resolve,reject) {
+        setTimeout(function () {
+          reject(new Error('error'));
+          },100)
+      })
+      .catch(function (error) {
+        expect(error.message).to.eql('error')
+      })
+    });
+    it('not calls catch()\'s handler if promise is resolved' ,function(done){
+      new Oath(function (resolve,reject) {
+        setTimeout(function () { resolve('ok') },100)
+      }).then (function () { done()})
+        .catch(function () { done(new Error('Expected catch() handler to be not called!'))})
+    });
+    it('not calls then()\'s handler if promise is rejected'  ,function(done){
+      new Oath(function (resolve,reject) {
+        setTimeout(function () { reject('fail') },100)
+      }).catch  (function () { done() })
+        .then   (function () { done(new Error('Expected then() handler to be not called if promise was rejected ')) })
+    });
+    it('chaines then()\'s  handlers returns after the promise resolving',function(done){
+      new Oath(function () {
+       setTimeout(function () { resolve('ok') },100)
+      }).then(function (ok) {
+        ok || done(new Error('Expected the promise is passing a resolved value into the first nearest then() handler'));
+        return {ok:ok}
+      }).then(function (obj) {
+        obj.ok || done(new Error('Expected the return value being of the first then() handler being into a second'));
+        done()
+      })
+    });
+    it('chaines catch()\'s handlers returns after the promise rejecting',function(done){
+      new Oath(function () {
+       setTimeout(function () { reject('fail') },100)
+      }).catch(function (fail) {
+          fail || done(new Error('Expected an rejected value'));
+          return {result:'result of a catching'}
+      }).then(function (obj) {
+        obj.result || done(new Error('Expected value being passed into the then() handler retrieved out of the catch\'s handler return'));
+        done()
+      })
+    });
+  });
 });
