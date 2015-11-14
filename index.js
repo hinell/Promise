@@ -1,6 +1,7 @@
 /*
-* Concise and attractively simple Promise implementation.
+* Handy Promise implementation provided by a flavored oop concept in very neat and concise form.
 * Copyright Hinell@github.com 2015.
+*
 */
 /* Todo: eslint  */
 void function () {
@@ -31,45 +32,15 @@ void function () {
   *                      It also fires a callback added by a catch method (see below).
   *@return {Promise} Promise object
   * */
-  oath.Promise = function (target /* target callback*/) {
+  oath.Promise = function (/* targeted objects*/) {
+    var  onOkayHandler  = this['[fail]'], /* To be used as resolve handler */
+         onFailHandler  = this['[okay]']; /* To be used as reject handler */
 
-    var  onOkayHandler  = this['[fail]' ], /* Resolve handler */
-         onFailHandler  = this['[okay]' ]; /* Reject handler */
-    this.target         = target;
     this.resolved       = false;
     this.rejected       = false;
-    this.done           = false;           /* true after resolving or rejection */
+    this.done           = false;           /* becomes true only after resolving or rejection */
 
-    /*
-     * Fires the "then" callback early provided an then() method (see below)
-     * Method not allowed to be called more than once
-     * @method resolve
-     * @param  {Object [,Object]}
-     * @return {Undefined} */
-    this.resolve   = function () {
-      /* If promise has been resolved or rejected - method does nothing */
-      if(!this.resolved && !this.rejected){
-        debug('resolve:arg',arguments);
-        this.resolved       = true;
-        this.targetResult   = onOkayHandler.apply({},arguments);
-        this.done           = true;
-      }
-    };
-    /*
-     * Like resolve() but with an exception - it fires handler appended only by a catch() method
-     * Method not allowed to be called more than once
-     * @method reject
-     * @param  {Object [,Object]}
-     * @return {Undefined} */
-    this.reject    = function () {
-      /* If promise has been resolved or rejected - method does nothing */
-      if(!this.resolved && !this.rejected){
-        debug('reject:arg',arguments);
-        this.rejected       = true;
-        this.targetResult   = onFailHandler.apply({},arguments);
-        this.done           = true;
-      }
-    };
+
     /*
     * @method then accepts callback to be called after resolve callback is called inside of the target function.
     * @public
@@ -91,8 +62,59 @@ void function () {
              this.rejected || (onFailHandler = cb);
       return this
     };
-    arguments.length && function () {
-      /* Todo: designate a target callback handler */
+
+    /*
+     * Fires the "then" callback early provided an then() method (see below)
+     * Method not allowed to be called more than once
+     * @method resolve
+     * @param  {Object [,Object]}
+     * @return {Undefined} */
+    this.resolve   = function () {
+      /* If promise has been resolved or rejected - method does nothing */
+      if(!this.resolved && !this.rejected){
+        debug('resolve:arg',arguments);
+        this.resolved       = true;
+        this.targetResult   = onOkayHandler.apply({},arguments);
+        this.done           = true;
+      }
+    };
+    /*
+     * Like resolve() but with one exception - it fires handler appended only by a catch() method
+     * Method not allowed to be called more than once
+     * @method reject
+     * @param  {Object [,Object]}
+     * @return {Undefined} */
+    this.reject    = function () {
+      /* If promise has been resolved or rejected - method does nothing */
+      if(!this.resolved && !this.rejected){
+        debug('reject:arg',arguments);
+        this.rejected       = true;
+        this.targetResult   = onFailHandler.apply({},arguments);
+        this.done           = true;
+      }
+    };
+
+    this.targets                = [].slice.call(arguments);
+    this.targets.asynchronize   = function () {
+      return this.targets.map(function (object,i) {
+        var isFunction  = typeof object === 'function';
+        if( isFunction) return object;
+        var counter     = this.targets.counter || 2;
+        var delay       = ~~((counter/Math.E)*10);
+        if(!isFunction) return function (res,rej) {
+          setTimeout(res.bind(this,object),delay);
+          this.targets.counter  = ++counter;
+        }.bind(this);
+      })
+    }.bind(this)
+
+    this.targets.length === 1 && function () {
+      /* Todo: designate a target handler */
+      this.targets.asynchronize();
+      this.target(
+         this.resolve.bind(this)
+        ,this.reject.bind(this)
+        )
 
     }.call(this)
   };
