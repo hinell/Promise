@@ -7,32 +7,21 @@
 void function () {
   var debug    = false ? console.log.bind(console,'|'): function(){};
   "use strict";
-  function oath (fn) {
-      var args = [].slice.call(arguments)
-   /* Entry point here.
-      If we have only one target object passed into this function then we call #defer() (see below) method,
-      otherwise we call #when().*/
-      if (args.length === 1)
-        return oath.Promise.defer(fn);
-      if (args.length > 1) {
-        debug('several function case',args);
-        return oath.Promise.when.apply({},args)
-        }
-  }
-  (typeof window === 'object')?(window.oath = oath):(module.exports = oath);
+
   /*
   * @param {Function} Target callback. Accepts two arguments:
   *                   // targetFunction(resolve,reject){}
   *
   *                   1) resolve - function - intended to be called inside of the target function
   *                      with some result retrieved by of an any successful asynchronous (but not only) evaluation.
-  *                      It also fires a callback added by a then method (see below).
+  *                      It also fires a callback added by a then method.
   *
   *                   2) reject  - function - alike resolve, but for non-successful reason.
-  *                      It also fires a callback added by a catch method (see below).
+  *                      It also fires a callback added by a catch method.
   *@return {Promise} Promise object
   * */
-  oath.Promise = function (/* targeted objects*/) {
+  (typeof window === 'object')?(window.Oath = Promise):(module.exports = Promise);
+  function Promise (/* targeted objects*/) {
     var  onOkayHandler  = this['[fail]'], /* To be used as resolve handler */
          onFailHandler  = this['[okay]']; /* To be used as reject handler */
 
@@ -42,29 +31,7 @@ void function () {
 
 
     /*
-    * @method then accepts callback to be called after resolve callback is called inside of the target function.
-    * @public
-    * @param  {Function}  Called after the async function will be resolved.
-    * @return {oath.Promise instance}    Instance of Promise
-    * */
-    this.then      = function (cb) {
-          if(this.resolved || this.rejected) this.targetResult = cb(this.targetResult);
-          else onOkayHandler = cb;
-      return this
-    };
-    /*
-    * @method catch accepts callback to be called after reject callback is called inside of the target function.
-    * @public
-    * @param  {Function}  Called after the async function will be resolved.
-    * @return {oath.Promise instance}    Instance of Promise
-    * */
-    this.catch     = function (cb) {
-             this.rejected || (onFailHandler = cb);
-      return this
-    };
-
-    /*
-     * Fires the "then" callback early provided an then() method (see below)
+     * Fires the "then" callback early provided by an then() method
      * Method not allowed to be called more than once
      * @method resolve
      * @param  {Object [,Object]}
@@ -93,6 +60,27 @@ void function () {
         this.done           = true;
       }
     };
+    /*
+    * @method then accepts callback to be called after resolve callback is called inside of the target function.
+    * @public
+    * @param  {Function}  Called after the async function will be resolved.
+    * @return {oath.Promise instance}    Instance of Promise
+    * */
+    this.then      = function (cb) {
+          if(this.resolved || this.rejected) this.targetResult = cb(this.targetResult);
+          else onOkayHandler = cb;
+      return this
+    };
+    /*
+    * @method catch accepts callback to be called after reject callback is called inside of the target function.
+    * @public
+    * @param  {Function}  Called after the async function will be resolved.
+    * @return {oath.Promise instance}    Instance of Promise
+    * */
+    this.catch     = function (cb) {
+             this.rejected || (onFailHandler = cb);
+      return this
+    };
 
     this.targets                = [].slice.call(arguments);
     this.targets.asynchronize   = function () {
@@ -111,32 +99,19 @@ void function () {
     this.targets.length === 1 && function () {
       /* Todo: designate a target handler */
       this.targets.asynchronize();
-      this.target(
+      this.targets[0](
          this.resolve.bind(this)
         ,this.reject.bind(this)
         )
 
     }.call(this)
   };
-  /*
-  * @method defer Accepts as target an async (or sync) function
-  * @param {Function}
-  * @return {Object} Promise instance
-  * */
-  oath.Promise.defer = function (targetObj) {
-   /* Todo: rewrite*/
-    if(typeof targetObj !== 'function') {targetObj = function (resolve) { resolve(targetObj)  }}
-    var promise = new oath.Promise();
-        targetObj(promise.resolve.bind(promise),promise);
-        return promise
-  };
-  /*
+  /*Todo: rewrite
   * The promise class method accepts several deferred object to handle them as deferred
   * @param {Function|[,Function,Objects]}
   * @return {oath.Promise instance}
   * */
-  oath.Promise.when = function () {
-     /*Todo: rewrite when*/
+  Promise.when = Promise.all = function () {
      /* An When instance is an representative  promise instance for .#then(), #catch() and #during() interfaces.*/
     var whenPromise   = this.whenPromise  = new oath.Promise;
     var thenListeners = whenPromise[':then'  ]
