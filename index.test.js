@@ -20,18 +20,18 @@ describe('Oath modules tests'  , function () {
 describe('Creation of the new Oath (Promise) object with', function () {
   describe('a single postpone parameter: '        , function () {
     it('passes resolved value into the first then()\'s handler which should return value into the next and so on'             ,
-    function(done) {
-      new Oath(function (resolve) { setTimeout(function () { resolve('foo') },50) })
-        .then(function (foo) { expect(foo).to.eql('foo'); return 'bar'})
-        .then(function (bar) { expect(bar).to.eql('bar'); done()})
-    });
+       function(done) {
+         new Oath(function (resolve) { setTimeout(function () { resolve('foo') },50) })
+           .then(function (foo) { expect(foo).to.eql('foo'); return 'bar'})
+           .then(function (bar) { expect(bar).to.eql('bar'); done()})
+       });
     it('passes rejected value into the catch handler which provides return as parameter of the next then() handler and so on' ,
-    function(done) {
-      new Oath(function (resolve,reject) { setTimeout(function () { reject(new Error('error'))},50) })
-        .catch(function () { done(new Error('Expected first catch() handler to be not called because it should be reassigned by second!'))})
-        .catch(function (error) { expect(error.message).to.eql('error'); return 'catchReturn'})
-        .then (function (catchResult) { expect(catchResult).to.eql('catchReturn');done() })
-    });
+       function(done) {
+         new Oath(function (resolve,reject) { setTimeout(function () { reject(new Error('error'))},50) })
+           .catch(function () { done(new Error('Expected first catch() handler to be not called because it should be reassigned by second!'))})
+           .catch(function (error) { expect(error.message).to.eql('error'); return 'catchReturn'})
+           .then (function (catchResult) { expect(catchResult).to.eql('catchReturn');done() })
+       });
 
     it('not calls catch()\'s handler if promise is already resolved'  , function(done){
       new Oath(function (resolve,reject){ setTimeout(function () { resolve('ok') },50) })
@@ -51,10 +51,10 @@ describe('Creation of the new Oath (Promise) object with', function () {
 
     })
   });
-  describe('a several postpone parameters: '      , function (done) {
+  describe('a several postpone parameters: '      , function () {
 
-    it('fires then()\'s handlers with resolved results', function () {
-      new Oath(
+    it('fires then()\'s handlers with resolved results', function (done) {
+      Oath.all(
         function (resolve,reject){ setTimeout(function () { resolve('foo') },10) },
         function (resolve,reject){ setTimeout(function () { resolve('bar') },25) }
       ).then(function (foo,bar) {
@@ -63,8 +63,9 @@ describe('Creation of the new Oath (Promise) object with', function () {
         done()
       })
     });
-    it('fires then()\'s handlers with rejected results', function () {
-      new Oath(
+
+    it('fires then()\'s handlers with rejected results', function (done) {
+      Oath.all(
         function (resolve,reject){ setTimeout(function () {reject('foo') },10) },
         function (resolve,reject){ setTimeout(function () {reject('bar') },25) }
       ).then(function (foo,bar) {
@@ -75,8 +76,8 @@ describe('Creation of the new Oath (Promise) object with', function () {
     });
 
     it('resolves value into a first then() handler and then passes its return a second and so on' , function (done) {
-      new Oath(
-         function (resolve,reject){ setTimeout(function () { resolve('foo') },10) }
+      Oath.all(
+        function (resolve,reject){ setTimeout(function () { resolve('foo') },10) }
         ,function (resolve,reject){ setTimeout(function () { reject ('bar') },10) }
       ) .then(function (foo,bar) {
         expect(foo).to.eql('foo');
@@ -88,7 +89,7 @@ describe('Creation of the new Oath (Promise) object with', function () {
     });
 
     it('keeps order of rejected and resolved values' , function (done) {
-      new Oath(
+      Oath.all(
         function (resolve,reject){ setTimeout(function () { resolve('res','foo') },10) },
         function (resolve,reject){ setTimeout(function () { reject ('rej','bar') },10) }
       ).then(function (res,foo,rej,bar) {
@@ -100,7 +101,7 @@ describe('Creation of the new Oath (Promise) object with', function () {
     });
 
     it('fires then()\'s handlers with rejected and resolved results', function (done) {
-      new Oath(
+      Oath.all(
         function (resolve,reject){ setTimeout(function () {resolve('foo') },10) },
         function (resolve,reject){ setTimeout(function () {reject('bar') },25) }
       ).then(function (foo,bar) {
@@ -111,7 +112,7 @@ describe('Creation of the new Oath (Promise) object with', function () {
 
     });
     it('resolves a sync objects' , function (done) {
-      new Oath('foo','bar')
+      Oath.all('foo','bar')
         .then(function (foo,bar) {
           expect(foo).to.eql('foo');
           expect(bar).to.eql('bar');
@@ -120,18 +121,18 @@ describe('Creation of the new Oath (Promise) object with', function () {
     });
 
     it('fires then()\'s handlers with results of mixed targets consisted of sync and async objects' ,
-    function (done) {
-      new Oath(
-         function (resolve,reject){ setTimeout(function () { resolve('first') },25) }
-        ,'second'
-        ,function (resolve,reject){ setTimeout(function () { reject('third') },50) }
-        ,'fourth'
-      ).then(function (first,second,third,fourth) {
-          first  === 'first'  &&
-          second === 'second' &&
-          third  === 'third'  &&
-          fourth === 'fourth' && done()
-      })
-    })
+       function (done) {
+         Oath.all(
+           function (resolve,reject){ setTimeout(function () { resolve('first') },25) }
+           ,'second'
+           ,function (resolve,reject){ setTimeout(function () { reject('third') },50) }
+           ,'fourth'
+         ).then(function (first,second,third,fourth) {
+           first  === 'first'  &&
+           second === 'second' &&
+           third  === 'third'  &&
+           fourth === 'fourth' && done()
+         })
+       })
   })
 });
