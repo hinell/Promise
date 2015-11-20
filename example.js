@@ -1,7 +1,11 @@
 var request = require('request');
-    oath    = require('./index.js');
+    oath    = require('./');
 
-    oath(request.get.bind(request,'http://www.google.com'))
-    .then(function (err,res,googlepage){
-      console.log(googlepage.toString()); // => google.com page
+    Oath(
+      request.get.bind(request,'http://www.google.com'),
+      request.get.bind(request,'http://www.example.com')
+      )
+    .then(function (googleErr,res,google,exmplErr,res,examplepage){
+      console.log(google.toString());       // => google.com page
+      console.log(examplepage.toString());  // => example.com page
     });
