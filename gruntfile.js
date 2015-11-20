@@ -1,17 +1,23 @@
 module.exports = function (grunt) {
-  grunt.loadNpmTasks('grunt-contrib-watch'  );
-  grunt.loadNpmTasks('grunt-mocha-test'     );
-  grunt.loadNpmTasks('grunt-simple-mocha'   );
+  ['grunt-contrib-uglify'
+  ,'grunt-contrib-watch'
+  ,'grunt-mocha-test'
+  ,'grunt-simple-mocha'   ]
+    .forEach(grunt.loadNpmTasks);
   grunt.initConfig({
-    mochaTest: {
-      oath: {
-        options: {
-          reporter         : 'spec',
-          //grep: 'defer',
-          clearRequireCache: true
-        },
-        src    : ['./*.test.js']
+    uglify   : {
+      distr: {
+        options: {sourceMap:true,sourceMapName:'./lib/oath.min.map'},
+        files: {'./lib/oath.min.js': './lib/oath.js'}
       }
+    },
+    mochaTest: {
+      options: {
+        reporter         : 'spec',
+        clearRequireCache: true
+      },
+       oath     : {options:{require: function(){ Oath = require('./lib/oath.js'    )  }},src:['./lib/*.test.js']},
+      'oath.min': {options:{require: function(){ Oath = require('./lib/oath.min.js')  }},src:['./lib/*.test.js']}
     },
     watch    : {
       tests: {
@@ -27,7 +33,11 @@ module.exports = function (grunt) {
     }
    }
   );
-  grunt.registerTask('test'     , ['mochaTest:oath']);
-  grunt.registerTask('test:live', ['watch:tests']);
-  grunt.registerTask('default'  , ['test:live'])
+  grunt
+    .registerTask('distr'      , ['uglify:distr'])
+    .registerTask('distr:test' , ['mochaTest:oath.min'])
+
+    .registerTask('test'       , ['mochaTest:oath'])
+    .registerTask('test:live'  , ['watch:tests'])
+    .registerTask('default'    , ['test:live']);
 };
