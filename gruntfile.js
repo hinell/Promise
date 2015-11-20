@@ -16,8 +16,16 @@ module.exports = function (grunt) {
         reporter         : 'spec',
         clearRequireCache: true
       },
-       oath     : {options:{require: function(){ Oath = require('./lib/oath.js'    )  }},src:['./lib/*.test.js']},
-      'oath.min': {options:{require: function(){ Oath = require('./lib/oath.min.js')  }},src:['./lib/*.test.js']}
+       oath     : {options:{require: function(){
+        var path = './lib/oath.js'    ;
+            Oath = require(path);
+            Oath.path = path;
+       }},src:['./lib/*.test.js']},
+      'oath.min': {options:{require: function(){
+        var path = './lib/oath.min.js';
+            Oath = require(path);
+            Oath.path = path;
+      }},src:['./lib/*.test.js']}
     },
     watch    : {
       tests: {
@@ -35,7 +43,7 @@ module.exports = function (grunt) {
   );
   grunt
     .registerTask('distr'      , ['uglify:distr'])
-    .registerTask('distr:test' , ['mochaTest:oath.min'])
+    .registerTask('distr:test' , ['distr','mochaTest:oath.min'])
 
     .registerTask('test'       , ['mochaTest:oath'])
     .registerTask('test:live'  , ['watch:tests'])
