@@ -4,30 +4,36 @@ module.exports = function (grunt) {
   ,'grunt-mocha-test'
   ,'grunt-simple-mocha'   ]
     .forEach(grunt.loadNpmTasks);
-  grunt.initConfig({
-    uglify   : {
+  grunt.config.init({
+     uglify   : {
       distr: {
         options: {sourceMap:true,sourceMapName:'./lib/oath.min.map'},
         files: {'./lib/oath.min.js': './lib/oath.js'}
       }
-    },
-    mochaTest: {
+    }
+    ,mochaTest: {
       options: {
         reporter         : 'spec',
         clearRequireCache: true
       },
-       oath     : {options:{require: function(){
-        var path = './lib/oath.js'    ;
-            Oath = require(path);
-            Oath.path = path;
-       }},src:['./lib/*.test.js']},
-      'oath.min': {options:{require: function(){
-        var path = './lib/oath.min.js';
-            Oath = require(path);
-            Oath.path = path;
-      }},src:['./lib/*.test.js']}
-    },
-    watch    : {
+       oath     : {
+        options:{
+          require: function(){
+          var path = './lib/oath.js';
+              Oath = require(path);
+              Oath.path = path
+              }},
+          src:['./lib/*.test.js']},
+      'oath.min': {
+        options:{
+          require: function(){
+          var path = './lib/oath.min.js';
+              Oath = require(path);
+              Oath.path = path
+          }},
+          src:['./lib/*.test.js']}
+    }
+    ,watch    : {
       tests: {
         options: {
           spawn    : true,
