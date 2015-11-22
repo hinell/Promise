@@ -51,7 +51,7 @@ module.exports = function (grunt) {
     .registerTask('distr'      , ['uglify:distr'])
     .registerTask('distr:test' , ['distr','mochaTest:oath.min'])
 
-    .registerTask('test'       , ['mochaTest:oath'])
-    .registerTask('test:live'  , ['watch:tests'])
-    .registerTask('default'    , ['test:live']);
+    .registerTask('dev:test'        , ['mochaTest:oath' ])
+    .registerTask('dev:test:live'   , ['watch:tests'    ])
+    .registerTask('default'         , ['dev:test:live'  ]);
 };
