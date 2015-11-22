@@ -7,7 +7,7 @@ module.exports = function (grunt) {
   grunt.config.init({
      uglify   : {
       distr: {
-        options: {sourceMap:true,sourceMapName:'./lib/oath.min.map'},
+        options: {sourceMap:true,sourceMapName:'./lib/oath.min.map',banner: '/*Copyright hinell@github.com 2015. | https://github.com/hinell/oath-js | <%= grunt.template.date(Date.now(),"yy.mm.dd") %>*/'},
         files: {'./lib/oath.min.js': './lib/oath.js'}
       }
     }
@@ -49,7 +49,7 @@ module.exports = function (grunt) {
   );
   grunt
     .registerTask('distr'      , ['uglify:distr'])
-    .registerTask('distr:test' , ['distr','mochaTest:oath.min'])
+    .registerTask('distr:test' , ['mochaTest:oath.min'])
 
     .registerTask('dev:test'        , ['mochaTest:oath' ])
     .registerTask('dev:test:live'   , ['watch:tests'    ])
