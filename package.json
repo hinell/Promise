@@ -4,7 +4,9 @@
   "description": "Simple native javascript implementation of the promise tool.",
   "main": "./lib/oath.min.js",
   "directories": {
-    "test": "test"
+    "lib"     : "lib",
+    "tests"   : "lib",
+    "examples": "examples"
   },
   "repository": {
     "type": "git",
