@@ -1,3 +1,9 @@
+/* Usage: npm i request && node examples/page | clip
+* Then just open up in the browser (ctrl+v into the url input form) resulting string.
+* Troubleshooting:
+* There is clip command that is specific only for windows platforms.
+* If you are not using windows solution is just to save string result into a file i.e. by node examples/page > result.txt
+* and then just copy it out into a system clipboard by using ctrl+c keys combination. */
 request = require('request');
 new require('../lib/oath.min.js')(
    request.bind(null,'https://cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js')

@@ -1,0 +1,31 @@
+{
+  "name": "oath-js",
+  "description": "Concise and neat, cross-platform Promise implementation.",
+  "main": "./lib/oath.min.js",
+  "authors": [
+    "Hinell@github.com"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "promise",
+    "deffered",
+    "oathjs",
+    "oath",
+    "oath.js",
+    "hinell",
+    "q"
+  ],
+  "homepage": "https://github.com/hinell/oath-js",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

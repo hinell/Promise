@@ -1,7 +1,7 @@
 {
   "name": "oath-js",
   "version": "1.0.0",
-  "description": "Simple native javascript implementation of the promise tool.",
+  "description": "Concise and neat, cross-platform Promise implementation.",
   "main": "./lib/oath.min.js",
   "directories": {
     "lib"     : "lib",

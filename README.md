@@ -1,67 +1,69 @@
-# Promise
-A simple native javascript promise implementation. 
-For iojs, nodejs and browser. [Promise /A+](https://promisesaplus.com/) compliant.
+# Oath
+[/A+ compliant](https://promisesaplus.com/) Promise implementation.<br>
+
+_Concise, light, neat_.<br>
+All about ~200 lines of code packed into an 6 kilobyte (or 3 being gzipped) file in size.<br>
+Very ligthweight in comparison to Q, Q-angular, jQuery Promise or any else implementation.<br>
+WebPack optimized, fully test covered.
 
 ---
+```shell
+Usage  : $ npm i hinell/oath-js --production
+Bower  : $ bower install hinell/oath-js
+Browser: <script src="path/to/oath.min.js"  type="text/javascript"></script>
 ```
-$ npm i hinell/oath-js
-```
-```javascript
-//  example.js
-//  before usage run: npm i request
-var request = require('request');
-    oath    = require('oath-js');
-    oath(request.get.bind(request,'http://www.google.com'))
-    .then(function (err,res,googlepage){
-      console.log(googlepage.toString()); // => google.com page
-    });
-```
-```javascript
-// A few quick examples:
-oath({some:'data'}).then(function(data){data.some}) // => 'data'
-oath(function(resolve){setTimeout(function(){resolve.('Deferred 1') })},
-     function(resolve){setTimeout(function(){resolve.('Deferred 2') })})
-.then(function(d,d2){d,d2}) 
-// d => 'Deferred 1', d2 => 'Deferred 2'
-// order of passed aruments is always ensured
-  
-oath(new Error('myError'))       .catch(function(err){})
-// err.message => 'myError'
-oath(new Error('myError'),'info').then(function(err,info){})  
-// err.message => 'myError', info => 'info'
+```shell
+Supported platforms:
+Node.js 0.12.7+
+Opera 12.10+
+Firefox 21+
+Chrome 23+
+IE9+ (IE8 and < require polyfills)
 ```
 ```javascript
-//  Want more? Ok, let's have a look:
-var deferredUser = {name:'foo',adress:'boo'}
-    oath(
-      deferredFunction,// Function - Any data types and amounts are allowed here.
-      deferredUser,    // Object   - If deferred object isn't a function, it will be handled as
-      anotherFunction) //            a callback and immediately passed into appropriate listeners 
-    .then(thenListener)//            through a resolve(deferredObject) callback
-    .catch(errListener)              
+// Short example.
+// examples/google.js
+// run: npm i request && node examples/google
+   request = require('request');
+   load    = function(url){ return  request.bind(null,url) };
+   Oath    = require('../lib/oath.min.js');
 
-    function deferredFunction(resolve,promise){
-    //  If deferred is a function object and once your deferred stuff becomes available to use
-    //  you should always call resolve method with passed into your deferred result, e.g.:
-        resolve('some data here!');
-        return                           // More about resolve(): 
-        resolve()                        // This will just initialize all then listeners
-        resolve(new Error('err'),'info') // This initialize all error listeners only if
-                                         // number of deferred objects is one
-                                         // if number of those object is more than one - 
-                                         // initialize all then listeners
-    }
-    function anotherFunction (resolve,promise){ 
-        resolve.apply(promise,[{data:'here is example of how we can apply a resolve method by .apply()'}])
-        }
-//  And results handling        
-    function thenListener (fnData,user,someData){
-        fnData    // => 'some data here!'
-        user      // => {name:'foo',adress:'boo'}
-        someData  // => {data:'here is example where we can apply a resolve method by .apply()'}
-    }
-  
+   new Oath(load('https://google.com'),
+            load('http://example.com/'))
+           .then(function (a,b,google,a,b,example) {
+             console.log(google); // => google page
+             console.log(example);// => example page
+           });
+```
+```
+Follow to examples folder if you want more them.
+```
+## API Details
+```javascript
+promise = new Oath(obj[,obj]) // obj - function(resolve,reject){} | {object} - async or sync objects:
+                              // If obj it is function, then it exptected to call resolve or reject callback.
+                              // If obj is not - object will be resolved immediately.
+```
+```javascript
+promise.then (callback)       // callback - Intended to be called when promise is resolved with provided values
+                              // If amount of them more than one they are passed into then() handler
+                              // in the same order as they have been passed into the resolve() callback
+promise.catch(callback)       // callback - The same as then()'s callback, but only for rejection.
+                              // It is impossible to set more than one catch handler
+                              // If before setting catch() handler have been setup of then()'s handlers
+                              // they are discarded.
+```
+```javascript
+new Oath(function(resolve){ resolve('bar')  })
+   .then(function(val    ){ return 'foo'+val}) // Promise chainening
+   .then(function(foobar ){ foobar });         // foobar => 'foobar'
 
 ```
-|Why?|*Just for fun!* :v: |
-|-----|----|
+## Can't wait
+```
+1) Implement reflection of a first's promise instances then()'s|catch()'s
+   handlers to allow them to be used by the next newly created and returned promise instance
+   i.e. new Oath().then(function(){return new Oath()}).then(/* handler for the last promise instance */)
+2) Provide XMLHttpRequest integration.
+3) Polyfills.
+```
