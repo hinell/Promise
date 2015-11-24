@@ -1,4 +1,4 @@
-# Oath
+# Oath 
 [/A+ compliant](https://promisesaplus.com/) Promise implementation.<br>
 
 _Concise, light, neat_.<br>
@@ -36,7 +36,7 @@ IE9+ (IE8 and < require polyfills)
            });
 ```
 ```
-More examples can be found in an identically named folder.
+Follow to the examples/ folder if you want more of them.
 ```
 ##API Details
 ```javascript
