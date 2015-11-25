@@ -5,7 +5,8 @@
 * If you are not using windows solution is just to save string result into a file i.e. by node examples/page > result.txt
 * and then just copy it out into a system clipboard by using ctrl+c keys combination. */
 request = require('request');
-new require('../lib/oath.min.js')(
+Oath    = require('../src/oath.min.js');
+new Oath(
    request.bind(null,'https://cdnjs.cloudflare.com/ajax/libs/Base64/0.3.0/base64.min.js')
   ,request.bind(null,'https://avatars1.githubusercontent.com/u/8136158?v=3&u=3706d0cc863ee23f15ab9ef5fd3b46cdb11f77cf&s=140',{encoding:null})
   ,'This example shows how to deal with two async https request '
