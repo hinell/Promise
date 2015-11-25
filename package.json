@@ -2,10 +2,10 @@
   "name": "oath-js",
   "version": "1.0.0",
   "description": "Concise and neat, cross-platform Promise implementation.",
-  "main": "./lib/oath.min.js",
+  "main": "./src/oath.min.js",
   "directories": {
-    "lib"     : "lib",
-    "tests"   : "lib",
+    "src"     : "src",
+    "tests"   : "src",
     "examples": "examples"
   },
   "repository": {
@@ -19,6 +19,7 @@
     "oath",
     "oath.js",
     "hinell",
+    "shim",
     "q"
   ],
   "author": "Hinell@github.com",
@@ -26,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/hinell/oath-js/issues"
   },
-  "homepage": "https://github.com/hinell/oath-js#readme",
+  "homepage": "https://github.com/hinell/oath-js",
   "devDependencies": {
     "expect.js": "^0.3.1",
     "grunt": "^0.4.5",

@@ -192,6 +192,6 @@ void function () {
   };
   (typeof module === 'object') ?(module.exports = Oath)
   :(typeof define === 'function'
-    ? define(function (req,exports,module) { return Oath})
+    ? define('Oath',function (req,exports,module) { return Oath})
     : (window.Oath = Oath));
 }();

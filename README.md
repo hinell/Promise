@@ -11,6 +11,7 @@ WebPack optimized, fully covered by tests.
 Usage  : $ npm i hinell/oath-js --production
 Bower  : $ bower install hinell/oath-js
 Browser: <script src="path/to/oath.min.js"  type="text/javascript"></script>
+AMD    : define(['Oath'],function(Oath){ new Oath() })
 ```
 ```shell
 Supported platforms:

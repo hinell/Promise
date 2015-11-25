@@ -16,7 +16,7 @@ describe('Oath modules tests'  , function () {
     it('AMD modules'      , function () {
       var module = {exports: void 0};
       var OathAMD= void 0;
-      var define = function (fn) {
+      var define = function (modulename,fn) {
           OathAMD = fn(void 0,module.exports,module);
       };
       new Function('define', OathSource)(define);

@@ -7,8 +7,8 @@ module.exports = function (grunt) {
   grunt.config.init({
      uglify   : {
       distr: {
-        options: {sourceMap:true,sourceMapName:'./lib/oath.min.map',banner: '/*Copyright hinell@github.com 2015. | https://github.com/hinell/oath-js | <%= grunt.template.date(Date.now(),"yy.mm.dd") %>*/'},
-        files: {'./lib/oath.min.js': './lib/oath.js'}
+        options: {sourceMap:true,sourceMapName:'./src/oath.min.map',banner: '/*Copyright hinell@github.com 2015. | https://github.com/hinell/oath-js | <%= grunt.template.date(Date.now(),"yy.mm.dd") %>*/'},
+        files: {'./src/oath.min.js': './src/oath.js'}
       }
     }
     ,mochaTest: {
@@ -19,19 +19,19 @@ module.exports = function (grunt) {
        oath     : {
         options:{
           require: function(){
-          var path = './lib/oath.js';
+          var path = './src/oath.js';
               Oath = require(path);
               Oath.path = path
               }},
-          src:['./lib/*.test.js']},
+          src:['./src/*.test.js']},
       'oath.min': {
         options:{
           require: function(){
-          var path = './lib/oath.min.js';
+          var path = './src/oath.min.js';
               Oath = require(path);
               Oath.path = path
           }},
-          src:['./lib/*.test.js']}
+          src:['./src/*.test.js']}
     }
     ,watch    : {
       tests: {
@@ -41,8 +41,8 @@ module.exports = function (grunt) {
           //debounceDelay: 500,
           reload   : true
         },
-        tasks  : ['test'],
-        files  : ['gruntfile.js','./**/*.test.js', './index.js']
+        tasks  : ['dev:test'],
+        files  : ['gruntfile.js','./src/*.test.js', './src/*.js']
         }
     }
    }
