@@ -4,23 +4,28 @@
 _Concise, light, neat_.<br>
 All about ~200 lines of code packed into an 6 KB (or 3 being gzipped) file in size.<br>
 Very ligthweight in comparison to Q, Q-angular, jQuery Promise or any else implementation.<br>
-Conformed with AMD, commonjs and browser modules formats, webpack optimazed and fully covered by tests
+Provided in UMD format, conformed with AMD, commonjs and browser module formats, webpack optimazed and fully covered by tests
 
 -
-```shell
+```
 Usage  : $ npm i hinell/oath-js --production
 Bower  : $ bower install hinell/oath-js
 Browser: <script src="path/to/lib/oath.min.js"  type="text/javascript"></script>
 AMD    : define(['Oath'],function(Oath){ new Oath() })
 ```
-```shell
+```
 Supported platforms:
 Node.js 0.12.7+
 Opera 12.10+
 Firefox 21+
 Chrome 23+
-IE9+ (IE8 and < require polyfills)
+IE9+ (IE8 and < polyfills  required)
 ```
+```
+⚠! If you are using browser the version of is below mentioned
+please consider to include this html5 shim in your page:  https://github.com/es-shims/es5-shim;
+```
+
 ```javascript
 // Short example.
 // examples/google.js
@@ -36,7 +41,7 @@ new Oath(load('https://google.com'),
   });
 ```
 ```
-Follow to the examples/ folder if you want more hard of them.
+Follow to the examples folder for more info.
 ```
 ##API Details
 ```javascript
@@ -61,9 +66,7 @@ new Oath(function(resolve){ resolve('bar')  })
 ```
 ##Can't wait
 ```
-1) Implement reflection of a first's promise instances then()'s|catch()'s
-   handlers to allow them to be used by the next newly created and returned promise instance
-   i.e. new Oath().then(function(){return new Oath()}).then(/* handler for the last promise instance */)
-2) Provide XMLHttpRequest integration.
-3) Polyfills.
+1) Provide substitution of the current promise by a new one resovled or rejectet by
+   a handler i.e. new Oath().then(function(){return new Oath()}).then(/* the last promise return handler */)
+2) XMLHttpRequest integration.
 ```
