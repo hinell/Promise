@@ -22,7 +22,7 @@ Chrome 23+
 IE9+ (IE8 and < polyfills  required)
 ```
 ```
-⚠! If you are using browser the version of is below mentioned
+⚠ If the browser's version you are using is below of any else mentioned
 please consider to include this html5 shim in your page:  https://github.com/es-shims/es5-shim;
 ```
 
