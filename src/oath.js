@@ -3,7 +3,7 @@ void function () {
    * copyright hinell@github.com 2015.
    * Todo: add polyfills of Array.forEach(),.map(),.reduce(),func.bind() to support old browsers
    */
-  /* Err for undefined or required variables
+  /* Err util class for the undefined or required variables
    * @class */
      "use strict";
   var Err = function (m){
@@ -11,16 +11,17 @@ void function () {
            err.throw = function () { throw this };
     return err
   };
-  /* Accepts one sync or async objects.
-   * @param {function|object} - If it is a function then it accepts two arguments:
-   *    targetfunction(resolve,reject){};
-   *    Where:
-   *     1) resolve - function - intended to be called inside of the target function
-   *        with some result retrieved by of an any successful asynchronous (but not only) evaluation.
-   *        it also fires callback added by a then() method.
-   *
-   *     2) reject  - function - alike resolve, but for non-successful reason.
-   *        it also fires a callback added by a catch() method.
+  /* Accepts one sync or async object. In the rest of comments it is called a "target" object.
+   * @param {function|object} - 
+      In case of an object, the promise merely wraps it into the callback and calls it immediately.
+      In case of a function it passes two special arguments in, for exapmle targetfunction(resolve,reject){}.
+   *    Where is:
+   *     1) resolve - callback - intended to be called inside
+   *        with some result evaluated by the target function and passed in (callback).
+   
+   *     2) reject  - callback - the "resolve()" for an unsuccessful evaluations.
+   *        Under hood these both methods also fire the special callbacks that are attached to the promise
+   *        by the then() (for resolution case) and catch() (rejection case) methods respectevely.
    *@return {promise} promise object */
   function Promise () {
     /*@prop {object} promise._fail.handler  - to be used as rejection handler */
@@ -42,7 +43,7 @@ void function () {
     /*@prop {object} promise.done - true only if promise is resolved or rejected */
     this.done         = false;
     /* @prop {object} promise.target        - target container
-     * @prop {object} promise.target.return - buffer for returned value of target and each handler invocation*/
+     * @prop {object} promise.target.return - buffer for returned value of the target object and each handler invocation*/
     this.target         = {};
     this.target.return  = void 0;
     /* Fires the "then" handler early provided by an promise.then() method
@@ -115,17 +116,17 @@ void function () {
       setTimeout(function () {
         this.target.asynchronize();
         this.target.init()
-    }.bind(this))
+      }.bind(this))
     }
   }
-  /* Provides interface to access a group of promises
+  /* Provides interface to be used to access a group of promises in a user-class
    * @class
    * @param  {Promises[]} - Array of promises
    * @return {reconciler} */
   function Reconciler () {
     /*@prop reconciler.promises - pool of promises*/
     this.promises     = []
-    /*Indicates state of each promise in pool
+    /* Indicates whether all promises are already resolved or rejected (fullfilled - in terms of +/A) or not 
      * @method reconciler.done*/
     this.done         = function () {
       return this.promises.reduce(function (previous,promise) {
@@ -133,31 +134,33 @@ void function () {
       },true)
     };
     /* @method reconciler.results
-     * @return {Array} - Resolved and rejected values of each promise */
+     * @return {Array} - Resolved or rejected values of the each promise in form of [value[,value]]*/
     this.results      = function () {
       return this.promises.reduce(function (results,promise) {
         return results = results.concat(promise.value)
       },[])
     };
-    /* Callback to be implemetend in user-class and
-     * called (resolved|rejected) by each promise in the promises pool
+    /* Callback is to be defined in the user-class.
+     * This callback is used to be attached to the each promise that is 
+     * the promises store consists of and to be called with their
+     * resolved or rejected results.
      * @param {object} - accepts any of resolved or rejected values
      * @method reconciler.listener.set*/
     this.listener     = void 0;
     this.coefficient  = 2;
     this.insert       = function (promises) {
-      this.listener || new Err('Expected a promise\'s listener to be defined!: reconciler.listener').throw();
+      this.listener || new Err('Expected a promise listener to be defined!: reconciler.listener').throw();
       this.promises  = promises;
-      this.promises.length < 2 && new Err('Expected at least two Promises are required!: new Reconciler([promise x 2])').throw()
+      this.promises.length < 2 && new Err('Expected at least two Promises!: new Reconciler([promise x 2])').throw()
       this.promises.forEach(function(promise){
         promise
           .then (this.listener)
           .catch(this.listener);
         promise.target.delay  = ~~((++this.coefficient/Math.E)*10);
-        typeof promise.target.obj === 'undefined' && new Err('Each promise has to have a target object!: promise.target.obj').throw();
+        typeof promise.target.obj === 'undefined' && new Err('Each promise expected to have a target object!: promise.target.obj').throw();
       },this);
     };
-    /*Initialize each promise in pool
+    /*Initializes the promises
     * @method reconciler.reconcile*/
     this.reconcile    = function () {
       this.promises.length < 2 && new Err('Expected an .insert() method call before reconcilation!').throw()
@@ -172,9 +175,9 @@ void function () {
   * Accepts array like [object [,object]]
   * @return {promise} */
   function Visor (targets) {
-    targets.length < 2 && new Err('Expected at least two async or sync objects!').throw();
+    targets.length < 2 && new Err('Expected at least two async or sync target objects!: new Visor([obj,obj[,obj]])').throw();
     Promise.call(this);
-    this.catch    = function () { new Err('cathc() method is not allowed to catch results of many async|sync rejections, please, use then()').throw() };
+    this.catch    = function () { new Err('catch() is not intended to be used by the promise in case of a many targets provided in, please use then() instead').throw() };
     this.promises = new Reconciler();
     this.promises.listener = function () {
       this.promises.done() && this.resolve.apply(this,this.promises.results())
